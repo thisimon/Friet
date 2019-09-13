@@ -1,14 +1,5 @@
 #include "trail_diff.h"
 
-void test( State state ) 
-{
-    int i;
-    for ( i = 0; i < STATESIZE; i++ )
-    {
-        state[i] = i;
-    }
-}
-
 int main()
 {
     /*
@@ -18,7 +9,7 @@ int main()
     //sanityTestDiffWeight();
 
     /*
-    ** Looking from optimal trails starting from 1-bit differences
+    ** Looking from optimal differential trails starting from 1-bit differences
     */
     //Trail trail;
     // 1 round
@@ -31,7 +22,7 @@ int main()
     //diffTrailSearchStart( &trail, 29, 4 );
 
     /*
-    ** Extending the optimal trail on 4 rounds to 6 rounds
+    ** Extending the optimal differential trail on 4 rounds to 6 rounds
     */ 
     Trail trail;
     State state;
