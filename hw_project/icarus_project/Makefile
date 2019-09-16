@@ -1,0 +1,177 @@
+.PHONY: clean
+
+ICARUS_VERILOG_SIMULATOR=iverilog
+ICARUS_VERILOG_VVP=vvp
+
+VERILOG_SOURCE_FOLDER=../verilog_source
+
+FRIET_PERMUTATION_ROUNDS=1
+
+FRIET_PERMUTATION_SOURCE=\
+	$(VERILOG_SOURCE_FOLDER)/permutation/friet_permutation_round.v\
+	$(VERILOG_SOURCE_FOLDER)/permutation/friet_permutation_rc.v
+
+FRIET_PERMUTATION_PROTECTED_ASIC_SOURCE=\
+	$(VERILOG_SOURCE_FOLDER)/permutation/friet_xaon_gate.v\
+	$(VERILOG_SOURCE_FOLDER)/permutation/friet_permutation_protected_round_asic.v\
+	$(VERILOG_SOURCE_FOLDER)/permutation/friet_permutation_rc.v
+
+FRIET_PERMUTATION_PROTECTED_FPGA_SIMPLE_SOURCE=\
+	$(VERILOG_SOURCE_FOLDER)/permutation/friet_permutation_protected_round_fpga_simple.v\
+	$(VERILOG_SOURCE_FOLDER)/permutation/friet_permutation_rc.v
+
+FRIET_PERMUTATION_PROTECTED_FPGA_OPT_SOURCE=\
+	$(VERILOG_SOURCE_FOLDER)/permutation/friet_permutation_protected_round_fpga_opt.v\
+	$(VERILOG_SOURCE_FOLDER)/permutation/friet_permutation_rc.v
+
+FRIET_PERMUTATION_N_ROUNDS_NO_COMMUNICATION_SOURCE=\
+	$(FRIET_PERMUTATION_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/permutation/friet_permutation_n_rounds_no_communication.v
+
+FRIET_PERMUTATION_N_ROUNDS_WITH_COMMUNICATION_SOURCE=\
+	$(FRIET_PERMUTATION_N_ROUNDS_NO_COMMUNICATION_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/permutation/friet_permutation_n_rounds_with_communication.v
+
+TB_FRIET_PERMUTATION_N_ROUNDS_WITH_COMMUNICATION_SOURCE=\
+	$(FRIET_PERMUTATION_N_ROUNDS_WITH_COMMUNICATION_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/permutation/tb_friet_permutation_n_rounds_with_communication.v
+
+FRIET_PERMUTATION_N_ROUNDS_AXI4_LITE_SOURCE=\
+	$(FRIET_PERMUTATION_N_ROUNDS_NO_COMMUNICATION_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/permutation/friet_permutation_n_rounds_axi4_lite.v
+
+TB_FRIET_PERMUTATION_N_ROUNDS_AXI4_LITE_SOURCE=\
+	$(FRIET_PERMUTATION_N_ROUNDS_AXI4_LITE_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/permutation/tb_friet_permutation_n_rounds_axi4_lite.v
+
+FRIET_PERMUTATION_PROTECTED_N_ROUNDS_NO_COMMUNICATION_ASIC_SOURCE=\
+	$(FRIET_PERMUTATION_PROTECTED_ASIC_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/permutation/friet_permutation_protected_n_rounds_no_communication_asic.v
+
+FRIET_PERMUTATION_PROTECTED_N_ROUNDS_NO_COMMUNICATION_FPGA_SIMPLE_SOURCE=\
+	$(FRIET_PERMUTATION_PROTECTED_FPGA_SIMPLE_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/permutation/friet_permutation_protected_n_rounds_no_communication_fpga.v
+
+FRIET_PERMUTATION_PROTECTED_N_ROUNDS_NO_COMMUNICATION_FPGA_OPT_SOURCE=\
+	$(FRIET_PERMUTATION_PROTECTED_FPGA_OPT_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/permutation/friet_permutation_protected_n_rounds_no_communication_fpga.v
+
+FRIET_PERMUTATION_PROTECTED_N_ROUNDS_AXI4_LITE_ASIC_SOURCE=\
+	$(FRIET_PERMUTATION_PROTECTED_N_ROUNDS_NO_COMMUNICATION_ASIC_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/permutation/friet_permutation_protected_n_rounds_axi4_lite.v
+
+FRIET_PERMUTATION_PROTECTED_N_ROUNDS_AXI4_LITE_FPGA_SIMPLE_SOURCE=\
+	$(FRIET_PERMUTATION_PROTECTED_N_ROUNDS_NO_COMMUNICATION_ASIC_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/permutation/friet_permutation_protected_n_rounds_axi4_lite.v
+
+FRIET_PERMUTATION_PROTECTED_N_ROUNDS_AXI4_LITE_FPGA_OPT_SOURCE=\
+	$(FRIET_PERMUTATION_PROTECTED_N_ROUNDS_NO_COMMUNICATION_ASIC_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/permutation/friet_permutation_protected_n_rounds_axi4_lite.v
+
+TB_FRIET_PERMUTATION_PROTECTED_N_ROUNDS_AXI4_LITE_ASIC_SOURCE=\
+	$(FRIET_PERMUTATION_PROTECTED_N_ROUNDS_AXI4_LITE_ASIC_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/permutation/tb_friet_permutation_protected_n_rounds_axi4_lite.v
+
+TB_FRIET_PERMUTATION_PROTECTED_N_ROUNDS_AXI4_LITE_FPGA_SIMPLE_SOURCE=\
+	$(FRIET_PERMUTATION_PROTECTED_N_ROUNDS_AXI4_LITE_FPGA_SIMPLE_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/permutation/tb_friet_permutation_protected_n_rounds_axi4_lite.v
+
+TB_FRIET_PERMUTATION_PROTECTED_N_ROUNDS_AXI4_LITE_FPGA_OPT_SOURCE=\
+	$(FRIET_PERMUTATION_PROTECTED_N_ROUNDS_AXI4_LITE_FPGA_OPT_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/permutation/tb_friet_permutation_protected_n_rounds_axi4_lite.v
+
+FRIET_AE_STREAM_8_BITS_SOURCE=\
+	$(FRIET_PERMUTATION_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/ae_mode_stream/friet_ae_8_bits_state_machine.v\
+	$(VERILOG_SOURCE_FOLDER)/ae_mode_stream/friet_ae_8_bits.v
+
+TB_FRIET_AE_STREAM_8_BITS_SOURCE=\
+	$(FRIET_AE_STREAM_8_BITS_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/ae_mode_stream/tb_friet_ae_8_bits.v
+
+FRIET_AE_STREAM_32_BITS_SOURCE=\
+	$(FRIET_PERMUTATION_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/ae_mode_stream/friet_ae_32_bits_state_machine.v\
+	$(VERILOG_SOURCE_FOLDER)/ae_mode_stream/friet_ae_32_bits.v
+
+TB_FRIET_AE_STREAM_32_BITS_SOURCE=\
+	$(FRIET_AE_STREAM_32_BITS_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/ae_mode_stream/tb_friet_ae_32_bits.v
+
+FRIET_AE_PROTECTED_STREAM_8_BITS_SOURCE=\
+	$(FRIET_PERMUTATION_PROTECTED_ASIC_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/ae_mode_stream/friet_ae_protected_8_bits_state_machine.v\
+	$(VERILOG_SOURCE_FOLDER)/ae_mode_stream/friet_ae_protected_8_bits.v
+
+TB_FRIET_AE_PROTECTED_STREAM_8_BITS_SOURCE=\
+	$(FRIET_AE_PROTECTED_STREAM_8_BITS_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/ae_mode_stream/tb_friet_ae_protected_8_bits.v
+
+FRIET_AE_PROTECTED_STREAM_32_BITS_SOURCE=\
+	$(FRIET_PERMUTATION_PROTECTED_ASIC_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/ae_mode_stream/friet_ae_protected_32_bits_state_machine.v\
+	$(VERILOG_SOURCE_FOLDER)/ae_mode_stream/friet_ae_protected_32_bits.v
+
+TB_FRIET_AE_PROTECTED_STREAM_32_BITS_SOURCE=\
+	$(FRIET_AE_PROTECTED_STREAM_32_BITS_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/ae_mode_stream/tb_friet_ae_protected_32_bits.v
+
+FRIET_AE_STREAM_BUFFER_SOURCE=\
+	$(FRIET_PERMUTATION_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/ae_mode_stream_buffer/buffer_serial_in.v\
+	$(VERILOG_SOURCE_FOLDER)/ae_mode_stream_buffer/buffer_serial_out.v\
+	$(VERILOG_SOURCE_FOLDER)/ae_mode_stream_buffer/friet_ae_state_machine.v\
+	$(VERILOG_SOURCE_FOLDER)/ae_mode_stream_buffer/friet_ae.v
+
+TB_FRIET_AE_STREAM_BUFFER_SOURCE=\
+	$(FRIET_AE_STREAM_BUFFER_SOURCE)\
+	$(VERILOG_SOURCE_FOLDER)/ae_mode_stream_buffer/tb_friet_ae.v
+
+all: tb_friet_permutation_n_rounds_with_communication tb_friet_permutation_n_rounds_axi4_lite tb_friet_permutation_protected_n_rounds_axi4_lite_fpga_simple tb_friet_permutation_protected_n_rounds_axi4_lite_fpga_opt tb_friet_permutation_protected_n_rounds_axi4_lite_asic
+
+tb_friet_permutation_n_rounds_with_communication: $(TB_FRIET_PERMUTATION_N_ROUNDS_WITH_COMMUNICATION_SOURCE)
+	$(ICARUS_VERILOG_SIMULATOR) -g2001 -s $@ -P$@.test_combinational_rounds=$(FRIET_PERMUTATION_ROUNDS) -o $@_design $(TB_FRIET_PERMUTATION_N_ROUNDS_WITH_COMMUNICATION_SOURCE)
+	$(ICARUS_VERILOG_VVP) $@_design
+
+tb_friet_permutation_n_rounds_axi4_lite: $(TB_FRIET_PERMUTATION_N_ROUNDS_AXI4_LITE_SOURCE)
+	$(ICARUS_VERILOG_SIMULATOR) -g2001 -s $@ -P$@.test_combinational_rounds=$(FRIET_PERMUTATION_ROUNDS) -o $@_design $(TB_FRIET_PERMUTATION_N_ROUNDS_AXI4_LITE_SOURCE)
+	$(ICARUS_VERILOG_VVP) $@_design
+
+tb_friet_permutation_protected_n_rounds_axi4_lite_fpga_simple: $(TB_FRIET_PERMUTATION_PROTECTED_N_ROUNDS_AXI4_LITE_FPGA_OPT_SOURCE)
+	$(ICARUS_VERILOG_SIMULATOR) -g2001 -s tb_friet_permutation_protected_n_rounds_axi4_lite -Ptb_friet_permutation_protected_n_rounds_axi4_lite.test_combinational_rounds=$(FRIET_PERMUTATION_ROUNDS) -o tb_friet_permutation_protected_n_rounds_axi4_lite_design $(TB_FRIET_PERMUTATION_PROTECTED_N_ROUNDS_AXI4_LITE_FPGA_OPT_SOURCE)
+	$(ICARUS_VERILOG_VVP) $@_design
+
+tb_friet_permutation_protected_n_rounds_axi4_lite_fpga_opt: $(TB_FRIET_PERMUTATION_PROTECTED_N_ROUNDS_AXI4_LITE_FPGA_SIMPLE_SOURCE)
+	$(ICARUS_VERILOG_SIMULATOR) -g2001 -s tb_friet_permutation_protected_n_rounds_axi4_lite -Ptb_friet_permutation_protected_n_rounds_axi4_lite.test_combinational_rounds=$(FRIET_PERMUTATION_ROUNDS) -o tb_friet_permutation_protected_n_rounds_axi4_lite_design $(TB_FRIET_PERMUTATION_PROTECTED_N_ROUNDS_AXI4_LITE_FPGA_SIMPLE_SOURCE)
+	$(ICARUS_VERILOG_VVP) $@_design
+
+tb_friet_permutation_protected_n_rounds_axi4_lite_asic: $(TB_FRIET_PERMUTATION_PROTECTED_N_ROUNDS_AXI4_LITE_ASIC_SOURCE)
+	$(ICARUS_VERILOG_SIMULATOR) -g2001 -s tb_friet_permutation_protected_n_rounds_axi4_lite -Ptb_friet_permutation_protected_n_rounds_axi4_lite.test_combinational_rounds=$(FRIET_PERMUTATION_ROUNDS) -o tb_friet_permutation_protected_n_rounds_axi4_lite_design $(TB_FRIET_PERMUTATION_PROTECTED_N_ROUNDS_AXI4_LITE_ASIC_SOURCE)
+	$(ICARUS_VERILOG_VVP) $@_design
+
+tb_friet_ae_stream_8_bits: $(TB_FRIET_AE_STREAM_8_BITS_SOURCE)
+	$(ICARUS_VERILOG_SIMULATOR) -g2001 -s tb_friet_ae_8_bits -Ptb_friet_ae_8_bits.test_combinational_rounds=$(FRIET_PERMUTATION_ROUNDS) -o tb_friet_ae_8_bits_design $(TB_FRIET_AE_STREAM_8_BITS_SOURCE)
+	$(ICARUS_VERILOG_VVP) tb_friet_ae_8_bits_design
+
+tb_friet_ae_protected_stream_8_bits: $(TB_FRIET_AE_PROTECTED_STREAM_8_BITS_SOURCE)
+	$(ICARUS_VERILOG_SIMULATOR) -g2001 -s tb_friet_ae_protected_8_bits -Ptb_friet_ae_protected_8_bits.test_combinational_rounds=$(FRIET_PERMUTATION_ROUNDS) -o tb_friet_ae_protected_8_bits_design $(TB_FRIET_AE_PROTECTED_STREAM_8_BITS_SOURCE)
+	$(ICARUS_VERILOG_VVP) tb_friet_ae_protected_8_bits_design
+
+tb_friet_ae_stream_32_bits: $(TB_FRIET_AE_STREAM_32_BITS_SOURCE)
+	$(ICARUS_VERILOG_SIMULATOR) -g2001 -s tb_friet_ae_32_bits -Ptb_friet_ae_32_bits.test_combinational_rounds=$(FRIET_PERMUTATION_ROUNDS) -o tb_friet_ae_32_bits_design $(TB_FRIET_AE_STREAM_32_BITS_SOURCE)
+	$(ICARUS_VERILOG_VVP) tb_friet_ae_32_bits_design
+
+tb_friet_ae_protected_stream_32_bits: $(TB_FRIET_AE_PROTECTED_STREAM_32_BITS_SOURCE)
+	$(ICARUS_VERILOG_SIMULATOR) -g2001 -s tb_friet_ae_protected_32_bits -Ptb_friet_ae_protected_32_bits.test_combinational_rounds=$(FRIET_PERMUTATION_ROUNDS) -o tb_friet_ae_protected_32_bits_design $(TB_FRIET_AE_PROTECTED_STREAM_32_BITS_SOURCE)
+	$(ICARUS_VERILOG_VVP) tb_friet_ae_protected_32_bits_design
+
+tb_friet_ae_stream_buffer:$(TB_FRIET_AE_STREAM_BUFFER_SOURCE)
+	$(ICARUS_VERILOG_SIMULATOR) -g2001 -s tb_friet_ae -o tb_friet_ae_design $(TB_FRIET_AE_STREAM_BUFFER_SOURCE)
+	$(ICARUS_VERILOG_VVP) tb_friet_ae_design
+
+clean:
+	@echo "Cleaning up..."
+	rm -f "dump.vcd"
+	rm -f "tb_friet_permutation_n_rounds_axi4_lite_design"
+	rm -f "tb_friet_permutation_protected_n_rounds_axi4_lite_design"
+	@echo "Cleaning done."
