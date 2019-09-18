@@ -6,6 +6,7 @@ int main()
     ** Some sanity checks
     */
     //sanityTestLambda();
+    sanityTestLambdaTransposed();
     //sanityTestDiffWeight();
 
     /*
@@ -24,12 +25,12 @@ int main()
     /*
     ** Extending the optimal differential trail on 4 rounds to 6 rounds
     */ 
-    Trail trail;
+    /*Trail trail;
     State state;
     int i;
     diffTrailSearchStart( &trail, 29, 4 );
     copyState( &trail.state[STATESIZE * 3], state );
-    diffTrailExtend( state, 59, 2 );
+    diffTrailExtend( state, 59, 2 );*/
 
     return 1;
 }
