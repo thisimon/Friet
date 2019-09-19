@@ -1,4 +1,5 @@
 #include "trail_diff.h"
+#include "trail_lin.h"
 
 int main()
 {
@@ -6,8 +7,9 @@ int main()
     ** Some sanity checks
     */
     //sanityTestLambda();
-    sanityTestLambdaTransposed();
     //sanityTestDiffWeight();
+    sanityTestLambdaTransposed();
+    sanityTestCorrWeight();
 
     /*
     ** Looking from optimal differential trails starting from 1-bit differences

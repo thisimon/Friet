@@ -6,10 +6,10 @@ SRCDIR= ./source
 
 LIBS=-lm
 
-_DEPS = util.h friet.h trail_diff.h
+_DEPS = util.h friet.h trail_diff.h trail_lin.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_SRC = util.o friet.o trail_diff.o
+_SRC = util.o friet.o trail_diff.o trail_lin.o
 SRC = $(patsubst %,$(SRCDIR)/%,$(_SRC))
 
 _MAIN = main.o

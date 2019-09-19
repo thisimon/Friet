@@ -125,7 +125,7 @@ void sanityTestDiffWeight()
     {
         if ( mask[i] != expectedMask[i] )
         {
-            printf("Test of weight computation failed: the mask is incorrect\n");
+            printf("Test of the differential weight computation failed: the mask is incorrect\n");
             printlimb( mask );
             error = 1;
             break;
@@ -134,12 +134,12 @@ void sanityTestDiffWeight()
 
     if (weight != 95)
     {
-        printf("Test of weight computation failed: weight was %d instead of 95\n", weight);
+        printf("Test of the differential weight computation failed: weight was %d instead of 95\n", weight);
         error = 1;
     }
 
     if ( error == 0 )
     {
-        printf("Sanity checks on the weight computation passed succesfully\n");
+        printf("Sanity checks on the differential weight computation passed succesfully\n");
     }
 }
