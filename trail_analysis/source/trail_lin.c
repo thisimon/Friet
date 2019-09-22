@@ -81,3 +81,90 @@ void sanityTestCorrWeight()
         printf("Sanity checks on the correlation weight computation passed succesfully\n");
     }
 }
+
+static inline void computeLinMask( Limb maskB, Limb maskC, Limb tempB, Limb tempC, uint32_t i )
+{
+  uint32_t j, k;
+  uint32_t count = 0;
+  memset((void *) tempB, 0, 4*sizeof(uint32_t));
+  memset((void *) tempC, 0, 4*sizeof(uint32_t));
+
+  for ( j = 0; j < 32; j++ )
+  {
+    for ( k = 0; k < LIMBSIZE; k++ )
+    {
+      if ( ( ( maskB[k] & ( 1 << j ) ) != 0 ) )
+      {
+        if ( ( ( i >> count ) & 1 ) != 0 )
+        {
+            tempB[k] ^= (1 << j);
+        }
+        count++;
+      }
+      if ( ( ( maskC[k] & ( 1 << j ) ) != 0 ) )
+      {
+        if ( ( ( i >> count ) & 1 ) != 0 )
+        {
+            tempC[k] ^= (1 << j);
+        }
+        count++;
+      }
+    }
+  }
+}
+
+void linTrailSearch( Trail *trail, State state, Limb maskB, Limb maskC, uint32_t totalWeight, uint32_t weight, uint32_t totalRound, uint32_t nround, uint32_t bound )
+{
+    if ( nround == 0 )
+    {
+        printTrail( *trail, totalRound );
+    }
+    else
+    {
+        uint32_t i, *b, *c, newWeight, newTotalWeight;
+        State newState;
+        Limb tempB, tempC;
+        b = &newState[4];
+        c = &newState[8];
+
+        for ( i = 0; i < (1 << weight); i++ )
+        {
+            /*if ( nround == ROUND - 3 )
+            {
+            prog++;
+            printf("Processing: %3d%%\r", (100 * prog) / 10615040 );
+            fflush(stdout);
+            }*/
+            copyState( state, newState );
+            computeLinMask( maskB, maskC, tempB, tempC, i );
+            xor( b, tempB, b );
+            xor( c, tempC, c );
+            lambdaTransposed( newState );
+            newWeight = getCorrWeight( newState, tempB, tempC );
+            newTotalWeight = totalWeight + newWeight;
+            if ( newTotalWeight<= bound )
+            {
+                pushState( trail, newState, newWeight, totalRound - nround );
+                if ( newWeight > 32 )
+                {
+                    printTrail( *trail, totalRound - nround );
+                }
+                else
+                {
+                    linTrailSearch( trail, newState, tempB, tempC, newTotalWeight, newWeight, totalRound, nround-1, bound );
+                }
+            }
+        }
+    }
+}
+
+void linTrailSearchStart( Trail *trail, uint32_t bound, uint32_t nround )
+{
+    Limb maskB, maskC;
+    uint32_t weight;
+    State state = {0,0,0,1,0,0,0,0,0,0,0,0};
+    lambdaTransposed( state );
+    weight = getCorrWeight( state, maskB, maskC );
+    pushState( trail, state, weight, 0);
+    linTrailSearch( trail, state, maskB, maskC, weight, weight, nround, nround-1, bound );
+}

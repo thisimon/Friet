@@ -8,8 +8,8 @@ int main()
     */
     //sanityTestLambda();
     //sanityTestDiffWeight();
-    sanityTestLambdaTransposed();
-    sanityTestCorrWeight();
+    //sanityTestLambdaTransposed();
+    //sanityTestCorrWeight();
 
     /*
     ** Looking from optimal differential trails starting from 1-bit differences
@@ -34,5 +34,19 @@ int main()
     copyState( &trail.state[STATESIZE * 3], state );
     diffTrailExtend( state, 59, 2 );*/
 
+    /*
+    ** Looking from optimal differential trails starting from 1-bit differences
+    */
+    Trail trail;
+    // 1 round
+    //linTrailSearchStart( &trail, 2, 1 );
+    // 2 rounds
+    //linTrailSearchStart( &trail, 4, 2 );
+    // 3 rounds
+    //linTrailSearchStart( &trail, 10, 3 );
+    // 4 rounds
+    //linTrailSearchStart( &trail, 20, 4 );
+    // 5 rounds
+    linTrailSearchStart( &trail, 34, 5 );
     return 1;
 }
