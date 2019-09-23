@@ -76,6 +76,7 @@ void diffTrailSearch( Trail *trail, State state, Limb mask, uint32_t totalWeight
                 pushState( trail, newState, newWeight, totalRound - nround );
                 if ( newWeight > 32 )
                 {
+                    printf("Warning: a weight > 32 has been encountered \n");
                     printTrail( *trail, totalRound - nround );
                 }
                 else
@@ -98,15 +99,15 @@ void diffTrailSearchStart( Trail *trail, uint32_t bound, uint32_t nround )
     diffTrailSearch( trail, state, mask, weight, weight, nround, nround-1, bound );
 }
 
-void diffTrailExtend( State state, uint32_t bound, uint32_t nround )
+void diffTrailExtend( State state, uint32_t startWeight, uint32_t bound, uint32_t nround )
 {
     Trail trail;
     Limb mask;
     uint32_t weight;
     lambda( state );
     weight = getDiffWeight( state, mask );
-    pushState( &trail, state, weight+29, 0);
-    diffTrailSearch( &trail, state, mask, weight+29, weight, nround, nround-1, bound );
+    pushState( &trail, state, weight+startWeight, 0);
+    diffTrailSearch( &trail, state, mask, weight+startWeight, weight, nround, nround-1, bound );
 }
 
 void sanityTestDiffWeight()

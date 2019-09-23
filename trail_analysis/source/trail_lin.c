@@ -147,6 +147,7 @@ void linTrailSearch( Trail *trail, State state, Limb maskB, Limb maskC, uint32_t
                 pushState( trail, newState, newWeight, totalRound - nround );
                 if ( newWeight > 32 )
                 {
+                    printf("Warning: a weight > 32 has been encountered \n");
                     printTrail( *trail, totalRound - nround );
                 }
                 else
@@ -167,4 +168,15 @@ void linTrailSearchStart( Trail *trail, uint32_t bound, uint32_t nround )
     weight = getCorrWeight( state, maskB, maskC );
     pushState( trail, state, weight, 0);
     linTrailSearch( trail, state, maskB, maskC, weight, weight, nround, nround-1, bound );
+}
+
+void linTrailExtend( State state, uint32_t startWeight, uint32_t bound, uint32_t nround )
+{
+    Trail trail;
+    Limb maskB, maskC;
+    uint32_t weight;
+    lambdaTransposed( state );
+    weight = getCorrWeight( state, maskB, maskC );
+    pushState( &trail, state, weight+startWeight, 0);
+    linTrailSearch( &trail, state, maskB, maskC, weight+startWeight, weight, nround, nround-1, bound );
 }
