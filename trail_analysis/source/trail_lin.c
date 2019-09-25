@@ -129,12 +129,6 @@ void linTrailSearch( Trail *trail, State state, Limb maskB, Limb maskC, uint32_t
 
         for ( i = 0; i < (1 << weight); i++ )
         {
-            /*if ( nround == ROUND - 3 )
-            {
-            prog++;
-            printf("Processing: %3d%%\r", (100 * prog) / 10615040 );
-            fflush(stdout);
-            }*/
             copyState( state, newState );
             computeLinMask( maskB, maskC, tempB, tempC, i );
             xor( b, tempB, b );
@@ -164,10 +158,51 @@ void linTrailSearchStart( Trail *trail, uint32_t bound, uint32_t nround )
     Limb maskB, maskC;
     uint32_t weight;
     State state = {0,0,0,1,0,0,0,0,0,0,0,0};
-    lambdaTransposed( state );
     weight = getCorrWeight( state, maskB, maskC );
     pushState( trail, state, weight, 0);
     linTrailSearch( trail, state, maskB, maskC, weight, weight, nround, nround-1, bound );
+}
+
+void linTrailSearchStart2bits( Trail *trail, uint32_t bound, uint32_t nround )
+{
+    Limb maskB, maskC;
+    uint32_t weight, i;
+    State state;
+    for ( i = 1; i < 64; i++ )
+    {
+    memset( state, 0, 12*sizeof(uint32_t));
+    state[3] = 1;
+    state[3 - (i/32)] ^= (1 << (i % 32));
+    weight = getCorrWeight( state, maskB, maskC );
+        if (weight <= bound)
+        {
+            pushState(trail, state, weight, 0);
+            linTrailSearch( trail, state, maskB, maskC, weight, weight, nround, nround-1, bound );
+        }
+    }
+}
+
+void linTrailSearchStart3bits( Trail *trail, uint32_t bound, uint32_t nround )
+{
+    Limb maskB, maskC;
+    uint32_t weight, i, j;
+    State state;
+    for ( j = 1; j < 128; j++ )
+    {
+        for ( i = j; i < 128 - j; i++ )
+        {
+            memset( state, 0, 12*sizeof(uint32_t));
+            state[3] = 1;
+            state[3 - (i/32)] ^= (1 << (i % 32));
+            state[3 - ((i+j)/32)] ^= (1 << ((i+j) % 32));
+            weight = getCorrWeight( state, maskB, maskC );
+            if (weight <= bound)
+            {
+                pushState(trail, state, weight, 0);
+                linTrailSearch( trail, state, maskB, maskC, weight, weight, nround, nround-1, bound );
+            }
+        }
+    }
 }
 
 void linTrailExtend( State state, uint32_t startWeight, uint32_t bound, uint32_t nround )

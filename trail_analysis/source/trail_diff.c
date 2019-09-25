@@ -99,6 +99,50 @@ void diffTrailSearchStart( Trail *trail, uint32_t bound, uint32_t nround )
     diffTrailSearch( trail, state, mask, weight, weight, nround, nround-1, bound );
 }
 
+void diffTrailSearchStart2bits( Trail *trail, uint32_t bound, uint32_t nround )
+{
+    Limb mask;
+    uint32_t weight, i;
+    State state;
+    for ( i = 1; i < 64; i++ )
+    {
+    memset( state, 0, 12*sizeof(uint32_t));
+    state[3] = 1;
+    state[3 - (i/32)] ^= (1 << (i % 32));
+    lambda( state );
+    weight = getDiffWeight( state, mask );
+        if (weight <= bound)
+        {
+            pushState(trail, state, weight, 0);
+            diffTrailSearch( trail, state, mask, weight, weight, nround, nround-1, bound );
+        }
+    }
+}
+
+void diffTrailSearchStart3bits( Trail *trail, uint32_t bound, uint32_t nround )
+{
+    Limb mask;
+    uint32_t weight, i, j;
+    State state;
+    for ( j = 1; j < 128; j++ )
+    {
+        for ( i = j; i < 128 - j; i++ )
+        {
+            memset( state, 0, 12*sizeof(uint32_t));
+            state[3] = 1;
+            state[3 - (i/32)] ^= (1 << (i % 32));
+            state[3 - ((i+j)/32)] ^= (1 << ((i+j) % 32));
+            lambda( state );
+            weight = getDiffWeight( state, mask );
+            if (weight <= bound)
+            {
+                pushState(trail, state, weight, 0);
+                diffTrailSearch( trail, state, mask, weight, weight, nround, nround-1, bound );
+            }
+        }
+    }
+}
+
 void diffTrailExtend( State state, uint32_t startWeight, uint32_t bound, uint32_t nround )
 {
     Trail trail;
