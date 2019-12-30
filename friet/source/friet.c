@@ -110,16 +110,10 @@ void copy(bigint src, bigint dest)
 	}
 }
 
-/*
- * One round of Friet
- */
-void friet_round(bigint a, bigint b, bigint c, int i)
+void round_bare(bigint a, bigint b, bigint c)
 {
     bigint s = {0x00000000, 0x00000000, 0x00000000, 0x00000000};
 	bigint t = {0x00000000, 0x00000000, 0x00000000, 0x00000000};
-
-	/* Round constant addition */
-	c[3] = c[3] ^ ROUND_CONSTANT[i];
 
 	/* Permutation step   */
 	copy(b, s);
@@ -147,6 +141,17 @@ void friet_round(bigint a, bigint b, bigint c, int i)
 	bitrol(c, t, 67);
 	and(s, t, s);
 	xor(s, a, a);
+}
+
+/*
+ * One round of Friet
+ */
+void friet_round(bigint a, bigint b, bigint c, int i)
+{
+	/* Round constant addition */
+	c[3] = c[3] ^ ROUND_CONSTANT[i];
+
+	round_bare(a, b, c);
 }
 
 void lambda( State state )

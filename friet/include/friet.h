@@ -47,6 +47,8 @@ void copy(bigint src, bigint dest);
  */
 void friet_round(bigint a, bigint b, bigint c, int i);
 
+void round_bare(bigint a, bigint b, bigint c);
+
 void lambda( State state );
 void lambdaTransposed( State state );
 void sanityTestLambda();
