@@ -1,15 +1,121 @@
+#include "friet.h"
 #include "trail_diff.h"
 #include "trail_lin.h"
+
+void test_vector( void )
+{
+    int i;
+	bigint a = {0x5e5b4fd2, 0x2b68c687, 0x2872da1d, 0x381678b4};
+	bigint b = {0x16b57065, 0xdafce593, 0x163ea458, 0x9954c496};
+	bigint c = {0xe7466196, 0x773bc7fe, 0x53c2d88b, 0xc3c0f385};
+	bigint e = {0, 0, 0, 0};
+	bigint f = {0, 0, 0, 0};
+	bigint g = {0, 0, 0, 0};
+
+	printf("Executing Friet on a test vector\n");
+	printf("Input state:\n");
+	printf("a = ");
+	printlimb(a);
+	printf("b = ");
+	printlimb(b);
+	printf("c = ");
+	printlimb(c);
+
+    copy(a,e);
+    copy(b,f);
+    copy(c,g);
+
+	for(i = 0; i < 24; i++) {
+		friet_round(a, b, c, i);
+	}
+
+	printf("Output state:\n");
+	printf("a = ");
+	printlimb(a);
+	printf("b = ");
+	printlimb(b);
+	printf("c = ");
+	printlimb(c);
+}
+
+/*
+** Validating lambda function on a test vector
+*/
+void sanityTestLambda()
+{
+    uint32_t i;
+    uint32_t error = 0;
+    State state = {0x5e5b4fd2, 0x2b68c687, 0x2872da1d, 0x381678b4,
+                    0x16b57065, 0xdafce593, 0x163ea458, 0x9954c496,
+                    0xe7466196, 0x773bc7fe, 0x53c2d88b, 0xc3c0f385};
+    State expectedState = {0xafa85e21, 0x86afe4ea, 0x6d8ea6ce, 0x62824fa7,
+                            0xc6b25c2d, 0x8ec0336d, 0xb8e93188, 0xa38836d9,
+                            0x32eafc3e, 0x29859d77, 0xd640fbf7, 0x72e67b93};
+    lambda( state );
+    Trail trail;
+
+    for( i = 0; i < STATESIZE; i++ )
+    {
+        if ( state[i] != expectedState[i] )
+        {
+            printf("Test of lambda failed: the state is incorrect\n");
+            pushState( &trail, state, 0, 0 );
+            printTrail(trail, 1);
+            error = 1;
+            break;
+        }
+    }
+
+    if ( error == 0 )
+    {
+        printf("Sanity checks on lambda passed succesfully\n");
+    }
+}
+
+/*
+** Validating the transpose of the lambda function on a test vector
+*/
+void sanityTestLambdaTransposed()
+{
+    uint32_t i;
+    uint32_t error = 0;
+    State state = {0x5e5b4fd2, 0x2b68c687, 0x2872da1d, 0x381678b4,
+                    0x16b57065, 0xdafce593, 0x163ea458, 0x9954c496,
+                    0xe7466196, 0x773bc7fe, 0x53c2d88b, 0xc3c0f385};
+    State expectedState = {0x23713488, 0x8f44defa, 0xeb26a843, 0x3f853f99,
+                            0x48ee3fb7, 0xf1942314, 0x3e4c7e45, 0xa142bc22, 
+                            0x7c360a2e, 0x57bb9c13, 0x1f612bee, 0x29e5d573};
+
+    lambdaTransposed( state );
+    Trail trail;
+
+    for( i = 0; i < STATESIZE; i++ )
+    {
+        if ( state[i] != expectedState[i] )
+        {
+            printf("Test of lambda transposed failed: the state is incorrect\n");
+            pushState( &trail, state, 0, 0 );
+            printTrail(trail, 1);
+            error = 1;
+            break;
+        }
+    }
+
+    if ( error == 0 )
+    {
+        printf("Sanity checks on lambda transposed passed succesfully\n");
+    }
+}
 
 int main()
 {
     /*
     ** Some sanity checks
     */
-    //sanityTestLambda();
-    //sanityTestDiffWeight();
-    //sanityTestLambdaTransposed();
-    //sanityTestCorrWeight();
+    /*sanityTestLambda();
+    sanityTestDiffWeight();
+    sanityTestLambdaTransposed();
+    sanityTestCorrWeight();*/
 
     /*
     ** Looking from optimal differential trails starting from 1-bit differences
@@ -109,6 +215,7 @@ int main()
                     0x00000000, 0x00000000, 0x40010000, 0x80000000,
                     0x00008000, 0x00000000, 0x40018000, 0x80010001};
     linTrailExtend( state, 36, 80, 2 );*/
+    //test_vector();
 
     return 1;
 }

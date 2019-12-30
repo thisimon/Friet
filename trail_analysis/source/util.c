@@ -1,19 +1,6 @@
 #include "util.h"
 
 /*
- * Print a 128-bit integer in hexadecimal
- */
-void printlimb(Limb a) 
-{
-	int i;
-	for(i = 0; i < LIMBSIZE; i++) {
-		printf("%08x", a[i]);
-	}
-	printf("\n");
-	return;
-}
-
-/*
  * Print an entire trail
  */
 void printTrail( Trail trail, uint32_t nround )

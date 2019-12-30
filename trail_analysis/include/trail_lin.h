@@ -2,6 +2,7 @@
 #define hTrailLin
 
 #include "friet.h"
+#include "util.h"
 
 static inline uint32_t getCorrWeight( State state, Limb maskB, Limb maskC );
 void sanityTestCorrWeight();

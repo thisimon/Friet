@@ -1,27 +1,22 @@
-IDIR = ./include
 CC=gcc
-CFLAGS=-I $(IDIR)
+CFLAGS= -I include -I ../friet/include
 
-SRCDIR= ./source
+VPATH = source
 
 LIBS=-lm
 
-_DEPS = util.h friet.h trail_diff.h trail_lin.h
-DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
+all: trail_diff.o trail_lin.o util.o
 
-_SRC = util.o friet.o trail_diff.o trail_lin.o
-SRC = $(patsubst %,$(SRCDIR)/%,$(_SRC))
+util.o: util.c ../friet/include/friet.h include/util.h
+	$(CC) $(CFLAGS) -c $<
 
-_MAIN = main.o
-MAIN = $(patsubst %,$(SRCDIR)/%,$(_MAIN))
+trail_diff.o: trail_diff.c ../friet/include/friet.h include/util.h include/trail_diff.h
+	$(CC) $(CFLAGS) -c $<
 
-$(ODIR)/%.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
-
-all: $(MAIN) $(SRC)
-	$(CC) -o main $^ $(CFLAGS) $(LIBS)
+trail_lin.o: trail_lin.c ../friet/include/friet.h include/util.h include/trail_lin.h
+	$(CC) $(CFLAGS) -c $<
 
 .PHONY: clean
 
 clean:
-	rm -f $(SRCDIR)/*.o *~ *.exe
+	rm -f *.o *~ *.exe

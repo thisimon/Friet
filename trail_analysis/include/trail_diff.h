@@ -2,6 +2,7 @@
 #define hTrailDiff
 
 #include "friet.h"
+#include "util.h"
 
 static inline uint32_t getDiffWeight( State state, Limb mask );
 static inline void computeDiffMask( Limb mask, Limb temp, uint32_t i );
