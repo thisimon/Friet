@@ -1,6 +1,7 @@
 #include "friet.h"
 #include "trail_diff.h"
 #include "trail_lin.h"
+#include "degree.h"
 
 void test_vector( void )
 {
@@ -105,6 +106,38 @@ void sanityTestLambdaTransposed()
     {
         printf("Sanity checks on lambda transposed passed succesfully\n");
     }
+}
+
+void test_fast_round_bare( void )
+{
+    int i;
+	State s = {0x5e5b4fd2, 0x2b68c687, 0x2872da1d, 0x381678b4, 0x16b57065, 0xdafce593, 0x163ea458, 0x9954c496, 0xe7466196, 0x773bc7fe, 0x53c2d88b, 0xc3c0f385};
+    bigint a = {0x5e5b4fd2, 0x2b68c687, 0x2872da1d, 0x381678b4};
+	bigint b = {0x16b57065, 0xdafce593, 0x163ea458, 0x9954c496};
+	bigint c = {0xe7466196, 0x773bc7fe, 0x53c2d88b, 0xc3c0f385};
+	bigint e = {0, 0, 0, 0};
+	bigint f = {0, 0, 0, 0};
+	bigint g = {0, 0, 0, 0};
+
+	printf("Executing Friet on a test vector\n");
+	printf("Input state:\n");
+	printf("a = ");
+	printlimb(a);
+	printf("b = ");
+	printlimb(b);
+	printf("c = ");
+	printlimb(c);
+
+    round_bare(a, b, c);
+    fast_round_bare(s);
+
+	printf("Output state:\n");
+	printlimb(a);
+    printlimb((uint32_t *) &s[0]);
+	printlimb(b);
+    printlimb((uint32_t *) &s[4]);
+	printlimb(c);
+    printlimb((uint32_t *) &s[8]);
 }
 
 int main()
@@ -216,6 +249,19 @@ int main()
                     0x00008000, 0x00000000, 0x40018000, 0x80010001};
     linTrailExtend( state, 36, 80, 2 );*/
     //test_vector();
+
+    /*
+    ** Finding the algebraic degree of a few iterations of the round function
+    */
+    /*uint32_t indexes_1rounds[2] = {61, 91};
+    uint32_t indexes_2rounds[4] = {54, 71, 72, 122};
+    uint32_t indexes_3rounds[8] = {4, 52, 34, 35, 65, 82, 85, 102};
+    uint32_t indexes_4rounds[16] = {15, 65, 66, 78, 95, 96, 112, 116, 143, 147, 174, 224, 225, 237, 254, 255};
+    uint32_t indexes_4rounds[16] = {14, 15, 18, 35, 45, 46, 48, 62, 63, 65, 76, 93, 95, 112, 113, 125};*/
+    uint32_t indexes_5rounds[32] = {137, 138, 140, 154, 155, 157, 168, 185, 187, 204, 205, 217, 234, 235, 238, 255, 272, 282, 283, 285, 299, 300, 302, 313, 330, 332, 349, 345, 362, 379, 380, 383};
+    testDegree( indexes_5rounds, 2, 5, 0 );
+
+    //test_fast_round_bare();
 
     return 1;
 }

@@ -53,5 +53,6 @@ void lambda( State state );
 void lambdaTransposed( State state );
 void sanityTestLambda();
 void sanityTestLambdaTransposed();
+void fast_round_bare( State state );
 
 #endif
