@@ -9,14 +9,14 @@ void setbit(State s, uint32_t bit)
 
 	position = position % 32;
 
-	s[3*limb + word] |= (1 << position);
+	s[4*limb + word] |= (1 << position);
 }
 
 uint32_t hw_int( uint64_t value )
 {
 	uint32_t i;
 	uint32_t hw = 0;
-	for( i = 0; i < 8 * sizeof(uint64_t); i++ ) {
+	for( i = 0; i < 64; i++ ) {
 		hw += value & 1;
 		value >>= 1;
 	}
@@ -35,26 +35,38 @@ void printTruthTable( uint8_t *truthTable, uint32_t size )
 void initializeTruthTable( uint8_t *truthTable, uint32_t *indexes, uint32_t size, uint32_t round, uint32_t bit ) 
 {
 	State s;
-	uint64_t i, j, temp;
+	uint64_t i, j, temp, bound;
 	uint32_t limb, word, position;
 	limb = bit / 128;
 	word = 3 - (bit % 128) / 32;
 	position = bit % 32;
 
-	for( i = 0; i < ( 1 << size ); i++) {
+	bound = 1;
+	bound <<= size;
+	for( i = 0; i < bound; i++) {
 		memset(s, 0, sizeof(State));
 
 		for( j = 0; j < size; j++ ) {
-			if ( i & ( 1 << j ) ) {
+			temp = 1;
+			temp <<= j;
+			if ( i & temp ) {
 				setbit(s, indexes[j] );
 			}
 		}
+		/*printf("a ");
+		printlimb((uint32_t *)s);
+		printf("b ");
+		printlimb((uint32_t *)s + 4);
+		printf("c ");
+		printlimb((uint32_t *)s + 8);*/
 
 		for(j = 0; j < round; j++) {
 			fast_round_bare(s);
+			//round_bare((uint32_t *)s, (uint32_t *)s + 4, (uint32_t *)s + 8);
 		}
+		//printlimb(s);
 
-		temp = (s[3*limb + word] >> position) & 1;
+		temp = (s[4*limb + word] >> position) & 1;
 
 		truthTable[i] = temp;
 	}
@@ -62,12 +74,15 @@ void initializeTruthTable( uint8_t *truthTable, uint32_t *indexes, uint32_t size
 
 void ANF(uint8_t *truthTable, uint32_t size) 
 {
-	uint64_t i, j, k, pow2n, pow2i;
+	uint64_t i, j, k, pow2n, pow2i, temp;
 
-	pow2n = 1 << size;
+	pow2n = 1;
+	pow2n <<= size;
 	for( i = 0; i < size; i++) {
-		pow2i = 1 << i;
-		for( j = 0; j < pow2n; j+=2*pow2i ) {
+		pow2i = 1;
+		pow2i <<= i;
+		temp = pow2i << 1;
+		for( j = 0; j < pow2n; j += temp ) {
 			for( k = 0; k < pow2i; k++ ) {
 				truthTable[j + k + pow2i] ^= truthTable[j + k];
 			}
@@ -77,16 +92,17 @@ void ANF(uint8_t *truthTable, uint32_t size)
 
 int getDegree(uint8_t *truthTable, uint32_t size) 
 {
-	uint64_t i, h;
+	uint64_t i, h, bound;
 	uint32_t degree = 0;
 
-	for( i = 0; i < ( 1 << size); i++ ) {
+	bound = 1;
+	bound <<= size;
+
+	for( i = 0; i < bound; i++ ) {
 		if( truthTable[i] ) {
 			h = hw_int( i );
 			if( degree < h ) {
 				degree = h;
-				/*if (h == 16)
-					printf("Golden ticket: %x\n", i);*/
 			}
 		}
 	}
@@ -97,9 +113,13 @@ int getDegree(uint8_t *truthTable, uint32_t size)
 void testDegree( uint32_t *indexes, uint32_t size, uint32_t round, uint32_t bit )
 {
 	uint32_t degree;
-	uint64_t tableSize = 1 << size;
+	uint64_t tableSize = 1;
+	tableSize <<= size;
 	// Not sure if the following would work on a 32-bit machine if tableSize doesn't fit on 32 bits
 	uint8_t *truthTable = (uint8_t *) calloc(tableSize, sizeof(uint8_t));
+	if (truthTable == NULL) {
+		printf("Memory allocation failed, you wanted to allocate %lld bytes", tableSize);
+	}
 	initializeTruthTable( truthTable, indexes, size, round, bit );
 	ANF( truthTable, size );
 	degree = getDegree( truthTable, size );
