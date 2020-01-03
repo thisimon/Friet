@@ -210,7 +210,75 @@ void fast_round_bare( State s )
     temp2 = s[9] << 3;
     temp2 ^= s[10] >> 29;
     s[3] ^= temp & temp2;
+}
 
+void fast_inv_round_bare( State s )
+{
+    uint32_t temp, temp2;
+
+    /* Non linear step */
+    temp = s[5] << 4;
+    temp ^= s[6] >> 28;
+    temp2 = s[10] << 3;
+    temp2 ^= s[11] >> 29;
+    s[0] ^= temp & temp2;
+    temp = s[6] << 4;
+    temp ^= s[7] >> 28;
+    temp2 = s[11] << 3;
+    temp2 ^= s[8] >> 29;
+    s[1] ^= temp & temp2;
+    temp = s[7] << 4;
+    temp ^= s[4] >> 28;
+    temp2 = s[8] << 3;
+    temp2 ^= s[9] >> 29;
+    s[2] ^= temp & temp2;
+    temp = s[4] << 4;
+    temp ^= s[5] >> 28;
+    temp2 = s[9] << 3;
+    temp2 ^= s[10] >> 29;
+    s[3] ^= temp & temp2;
+
+    /* b = a ^ b ^ c */
+    s[4] ^= s[0] ^ s[8];
+    s[5] ^= s[1] ^ s[9];
+    s[6] ^= s[2] ^ s[10];
+    s[7] ^= s[3] ^ s[11];
+
+    /* Second Mixing step: c ^= bitrol(b, 80) */
+    s[8] ^= ( s[6] << 16 ) ^ ( s[7] >> 16 );
+    s[9] ^= ( s[7] << 16 ) ^ ( s[4] >> 16 );
+    s[10] ^= ( s[4] << 16 ) ^ ( s[5] >> 16 );
+    s[11] ^= ( s[5] << 16 ) ^ ( s[6] >> 16 );
+
+    /* First mixing step: b ^= bitrol(c, 1) */
+    s[4] ^= ( s[8] << 1 ) ^ ( s[9] >> 31 );
+    s[5] ^= ( s[9] << 1 ) ^ ( s[10] >> 31 );
+    s[6] ^= ( s[10] << 1 ) ^ ( s[11] >> 31 );
+    s[7] ^= ( s[11] << 1 ) ^ ( s[8] >> 31 );
+
+    // (a, b, c) = (c, a, b)
+    temp = s[0];
+    s[0] = s[8];
+    s[8] = s[4];
+    s[4] = temp;
+    temp = s[1];
+    s[1] = s[9];
+    s[9] = s[5];
+    s[5] = temp;
+    temp = s[2];
+    s[2] = s[10];
+    s[10] = s[6];
+    s[6] = temp;
+    temp = s[3];
+    s[3] = s[11];
+    s[11] = s[7];
+    s[7] = temp;
+
+    // b = a ^ b ^ c
+    s[4] ^= s[0] ^ s[8];
+    s[5] ^= s[1] ^ s[9];
+    s[6] ^= s[2] ^ s[10];
+    s[7] ^= s[3] ^ s[11];
 }
 
 /*

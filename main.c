@@ -140,6 +140,25 @@ void test_fast_round_bare( void )
     printlimb((uint32_t *) &s[8]);
 }
 
+void test_fast_inv_round_bare( void )
+{
+    int i;
+	State s = {0x5e5b4fd2, 0x2b68c687, 0x2872da1d, 0x381678b4, 0x16b57065, 0xdafce593, 0x163ea458, 0x9954c496, 0xe7466196, 0x773bc7fe, 0x53c2d88b, 0xc3c0f385};
+    State t;
+    memcpy( t, s, sizeof(State) );
+    fast_round_bare(t);
+    fast_inv_round_bare(t);
+    for( i = 0; i < STATESIZE; i++ ) {
+        if ( s[i] != t[i] ) {
+            printf("Test failed: fast_inv_round_bare is not computed properly!\n");
+            return;
+        }
+    }
+
+	printf("Success: fast_inv_round_bare was computed properly!\n");
+    return;
+}
+
 int main()
 {
     /*
@@ -256,12 +275,23 @@ int main()
     /*uint32_t indexes_1rounds[2] = {61, 91};
     uint32_t indexes_2rounds[4] = {54, 71, 72, 122};
     uint32_t indexes_3rounds[8] = {4, 52, 34, 35, 65, 82, 85, 102};
-    uint32_t indexes_4rounds[16] = {15, 65, 66, 78, 95, 96, 112, 116, 143, 147, 174, 224, 225, 237, 254, 255};*/
+    uint32_t indexes_4rounds[16] = {15, 65, 66, 78, 95, 96, 112, 116, 143, 147, 174, 224, 225, 237, 254, 255};
     uint32_t indexes_4rounds[16] = {14, 15, 18, 35, 45, 46, 48, 62, 63, 65, 76, 93, 95, 112, 113, 125};
     uint32_t indexes_5rounds[32] = {137, 138, 140, 154, 155, 157, 168, 185, 187, 204, 205, 217, 234, 235, 238, 255, 272, 282, 283, 285, 299, 300, 302, 313, 330, 332, 349, 350, 362, 379, 380, 383};
-    testDegree( indexes_5rounds, 32, 5, 0 );
+    testDegree( indexes_5rounds, 32, 5, 0 );*/
 
+    /*
+    ** Finding the algebraic degree of a few iterations of the inverse of the round function
+    */
+    uint32_t indexes_1rounds[2] = {140, 365};
+    uint32_t indexes_2rounds[4] = {152, 232, 329, 377};
+    uint32_t i;
+    testDegreeInv( indexes_2rounds, 4, 2, 0 );
     //test_fast_round_bare();
+    //test_fast_inv_round_bare();
+    /*for(i = 0; i < 2; i++) {
+        printParents(indexes_1rounds[i]);
+    }*/
 
     return 1;
 }
