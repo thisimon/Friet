@@ -193,7 +193,7 @@ void printParents( uint32_t bit )
 	if (limb == 1) {
 		printf ("b_%d * c_%d + b_%d * c_%d \n", (12 + position) % 128 + 128,  (109 + position) % 128 + 256, (11 + position) % 128 + 128,  (108 + position) % 128 + 256);
 	}
-	if (limb == 1) {
+	if (limb == 2) {
 		printf ("b_%d * c_%d + b_%d * c_%d \n", (92 + position) % 128 + 128,  (61 + position) % 128 + 256, (11 + position) % 128 + 128,  (108 + position) % 128 + 256);
 	}
 }

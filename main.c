@@ -284,14 +284,17 @@ int main()
     ** Finding the algebraic degree of a few iterations of the inverse of the round function
     */
     uint32_t indexes_1rounds[2] = {140, 365};
-    uint32_t indexes_2rounds[4] = {152, 232, 329, 377};
+    uint32_t indexes_2rounds[4] = {152, 201, 298, 376};
+    uint32_t indexes_3rounds[8] = {134, 164, 212, 213, 261, 309, 310, 359};
+    uint32_t indexes_4rounds[16] = {146, 371, 176, 273, 224, 321, 225, 322, 144, 369, 145, 370, 193, 290, 195, 292};
     uint32_t i;
-    testDegreeInv( indexes_2rounds, 4, 2, 0 );
+    testDegreeInv( indexes_4rounds, 16, 4, 0 );
     //test_fast_round_bare();
     //test_fast_inv_round_bare();
-    /*for(i = 0; i < 2; i++) {
-        printParents(indexes_1rounds[i]);
+    /*for(i = 0; i < 8; i++) {
+        printParents(indexes_3rounds[i]);
     }*/
+    //printParents(365);
 
     return 1;
 }
