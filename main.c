@@ -159,6 +159,127 @@ void test_fast_inv_round_bare( void )
     return;
 }
 
+int comp (const void * elem1, const void * elem2) 
+{
+    uint32_t f = *((int*)elem1);
+    uint32_t s = *((int*)elem2);
+    if (f > s) return  1;
+    if (f < s) return -1;
+    return 0;
+}
+
+int noDuplicate( uint32_t *indexes, uint32_t size )
+{
+    uint32_t i;
+    for(i = 0; i < size-1; i++)
+    {
+        if( indexes[i] == indexes[i+1] )
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+void searchMaxDegreeMonomial(uint32_t round, uint32_t totalRound, uint32_t *indexes)
+{    
+    if ( round == totalRound )
+    {       
+        FILE *fptr;
+        uint32_t i;
+
+        fptr = fopen("searchlog.txt","a");
+        for( i = 0; i < (1 << round); i++)
+        {
+            fprintf(fptr,"%d, ",indexes[i]);
+        } 
+        fprintf(fptr,"\n");
+        fclose(fptr);
+        return;
+    }
+
+    else if(round == 0)
+    {
+        uint32_t candidates[2] = {140, 365};
+
+        searchMaxDegreeMonomial(1, totalRound, candidates);
+    }
+
+    else
+    {
+        uint32_t degree;
+        uint32_t size = 1 << round;
+        uint32_t bound = size << 1;
+        uint32_t *b0 = (uint32_t *) calloc( size, sizeof(uint32_t));
+        uint32_t *b1 = (uint32_t *) calloc( size, sizeof(uint32_t));
+        uint32_t *c0 = (uint32_t *) calloc( size, sizeof(uint32_t));
+        uint32_t *c1 = (uint32_t *) calloc( size, sizeof(uint32_t));
+        uint32_t i, j, limb, position;
+        uint32_t *candidates = (uint32_t *) malloc( bound * sizeof(uint32_t));
+
+        for(i = 0; i < size; i++)
+        {
+            limb = indexes[i] / 128;
+            position = indexes[i] % 128;
+            if(limb == 1)
+            {
+                b0[i] = (12 + position) % 128 + 128;
+                b1[i] = (11 + position) % 128 + 128;
+                c0[i] = (109 + position) % 128 + 256;
+                c1[i] = (108 + position) % 128 + 256; 
+            }
+            else
+            {
+                b0[i] = (92 + position) % 128 + 128;
+                b1[i] = (11 + position) % 128 + 128;
+                c0[i] = (61 + position) % 128 + 256;
+                c1[i] = (108 + position) % 128 + 256;
+            } 
+        }
+
+        for(i = 0; i < (1 << size); i++)
+        {
+            memset(candidates, bound, sizeof(uint32_t));
+            for(j = 0; j < size; j++)
+            {
+                if (i & (1 << j))
+                {
+                    candidates[2*j] = b1[j];
+                    candidates[2*j+1] = c1[j];
+                }
+                else
+                {
+                    candidates[2*j] = b0[j];
+                    candidates[2*j+1] = c0[j];
+                }
+            }
+
+            qsort (candidates, bound, sizeof(uint32_t), comp);
+
+            if( noDuplicate(candidates, (1 << round)) )
+            {
+                if (round < 4)
+                {
+                    degree = testDegreeInv( candidates, bound, round+1, 0 );
+                    if(degree == bound)
+                    {
+                        searchMaxDegreeMonomial(round+1, totalRound, candidates);
+                    }
+                }
+                else
+                {
+                    searchMaxDegreeMonomial(round+1, totalRound, candidates);
+                }      
+            }
+        }
+        free(candidates);
+
+    }
+    
+
+
+}
+
 int main()
 {
     /*
@@ -284,17 +405,31 @@ int main()
     ** Finding the algebraic degree of a few iterations of the inverse of the round function
     */
     uint32_t indexes_1rounds[2] = {140, 365};
-    uint32_t indexes_2rounds[4] = {152, 201, 298, 376};
-    uint32_t indexes_3rounds[8] = {134, 164, 212, 213, 261, 309, 310, 359};
-    uint32_t indexes_4rounds[16] = {146, 371, 176, 273, 224, 321, 225, 322, 144, 369, 145, 370, 193, 290, 195, 292};
+    //uint32_t indexes_2rounds[4] = {152, 201, 298, 376};
+    //uint32_t indexes_3rounds[8] = {134, 164, 212, 213, 261, 309, 310, 359};
+    //uint32_t indexes_4rounds[16] = {146, 371, 176, 273, 224, 321, 225, 322, 144, 369, 145, 370, 193, 290, 195, 292};
+    //uint32_t indexes_4rounds[16] = {144, 146, 176, 192, 193, 223, 225, 242, 273, 289, 290, 320, 322, 339, 369, 371};
+    //uint32_t indexes_4rounds[16] = {144, 145, 176, 192, 193, 224, 225, 242, 273, 289, 290, 321, 322, 339, 369, 370};
+    //uint32_t indexes_5rounds[32] = {155, 156, 157, 158, 173, 188, 203, 204, 205, 207, 222, 235, 236, 237, 253, 254, 270, 285, 300, 301, 302, 304, 319, 332, 333, 334, 350, 351, 380, 381, 382, 383};
+    //uint32_t indexes_5rounds[32] = {155, 156, 157, 158, 173, 187, 203, 204, 205, 207, 222, 235, 236, 237, 253, 254, 270, 284, 300, 301, 302, 304, 319, 332, 333, 334, 350, 351, 380, 381, 382, 383};
+    //uint32_t indexes_5rounds[32] = {155, 156, 157, 158, 173, 188, 203, 204, 205, 207, 222, 234, 236, 237, 253, 254, 270, 285, 300, 301, 302, 304, 319, 331, 333, 334, 350, 351, 380, 381, 382, 383};
+    //uint32_t indexes_5rounds[32] = {155, 156, 157, 158, 173, 188, 203, 204, 205, 207, 222, 234, 236, 237, 172, 254, 270, 285, 300, 301, 302, 304, 319, 331, 333, 334, 269, 351, 380, 381, 382, 383};
+    //uint32_t indexes_5rounds[32] = {155, 156, 157, 158, 173, 188, 203, 204, 205, 207, 175, 235, 236, 237, 253, 254, 270, 285, 300, 301, 302, 304, 272, 332, 333, 334, 350, 351, 380, 381, 382, 383};
+    //uint32_t indexes_5rounds[32] = {155, 156, 157, 158, 173, 188, 203, 204, 252, 207, 222, 235, 236, 237, 253, 254, 270, 285, 300, 301, 349, 304, 319, 332, 333, 334, 350, 351, 380, 381, 382, 383};
     uint32_t i;
-    testDegreeInv( indexes_4rounds, 16, 4, 0 );
+    //uint32_t indexes_5rounds[32] = {128, 156, 157, 158, 172, 188, 203, 204, 205, 206, 207, 234, 235, 236, 237, 253, 269, 285, 300, 301, 302, 303, 304, 331, 332, 333, 334, 350, 353, 381, 382, 383};
+    //uint32_t indexes_5rounds[32] = {156, 157, 158, 175, 186, 203, 204, 205, 206, 207, 234, 235, 236, 237, 253, 254, 272, 283, 300, 301, 302, 303, 304, 331, 332, 333, 334, 350, 351, 381, 382, 383};
+    //uint32_t indexes_5rounds[32] = {155, 156, 157, 158, 172, 175, 186, 203, 204, 205, 206, 234, 235, 236, 253, 254, 269, 272, 283, 300, 301, 302, 303, 331, 332, 333, 350, 351, 380, 381, 382, 383};
+    //uint32_t indexes_5rounds[32] = {128, 155, 156, 157, 172, 187, 203, 204, 205, 206, 235, 236, 237, 252, 253, 254, 269, 284, 300, 301, 302, 303, 332, 333, 334, 349, 350, 351, 353, 380, 381, 382};
+    //uint32_t indexes_5rounds[32] = {153, 154, 157, 158, 175, 185, 203, 205, 206, 207, 219, 234, 236, 250, 251, 253, 272, 282, 300, 302, 303, 304, 316, 331, 333, 347, 348, 350, 378, 379, 382, 383};
+    testDegreeInv( indexes_5rounds, 32, 5, 0 );
     //test_fast_round_bare();
     //test_fast_inv_round_bare();
-    /*for(i = 0; i < 8; i++) {
-        printParents(indexes_3rounds[i]);
+    /*for(i = 0; i < 2; i++) {
+        printParents(indexes_1rounds[i]);
     }*/
     //printParents(365);
+    //searchMaxDegreeMonomial(0, 5, NULL);
 
     return 1;
 }

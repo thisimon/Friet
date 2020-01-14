@@ -24,3 +24,4 @@ clean:
 	rm -f friet/*.o friet/*.exe
 	rm -f trail_analysis/*.o trail_analysis/*.exe
 	rm -f degree_analysis/*.o degree_analysis/*.exe
+	rm searchlog.txt

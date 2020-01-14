@@ -12,7 +12,7 @@ void initializeTruthTableInv( uint8_t *truthTable, uint32_t *indexes, uint32_t s
 void ANF(uint8_t *truthTable, uint32_t size);
 int getDegree(uint8_t *truthTable, uint32_t size);
 void testDegree( uint32_t *indexes, uint32_t size, uint32_t round, uint32_t bit );
-void testDegreeInv( uint32_t *indexes, uint32_t size, uint32_t round, uint32_t bit );
+uint32_t testDegreeInv( uint32_t *indexes, uint32_t size, uint32_t round, uint32_t bit );
 void printMonomial( uint32_t bit );
 void printParents( uint32_t bit );
 

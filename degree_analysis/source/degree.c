@@ -152,7 +152,7 @@ void testDegree( uint32_t *indexes, uint32_t size, uint32_t round, uint32_t bit 
 	free( truthTable );
 }
 
-void testDegreeInv( uint32_t *indexes, uint32_t size, uint32_t round, uint32_t bit )
+uint32_t testDegreeInv( uint32_t *indexes, uint32_t size, uint32_t round, uint32_t bit )
 {
 	uint32_t degree;
 	uint64_t tableSize = 1;
@@ -168,6 +168,8 @@ void testDegreeInv( uint32_t *indexes, uint32_t size, uint32_t round, uint32_t b
 	//printTruthTable( truthTable, size );
 	printf("The algebraic degree of output bit %d of the state after %d rounds of Friet^{-1} is %d\n", bit, round, degree);
 	free( truthTable );
+
+	return degree;
 }
 
 void printMonomial( uint32_t bit )
