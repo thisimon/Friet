@@ -134,12 +134,11 @@ int getDegree(uint8_t *truthTable, uint32_t size)
 	return degree;
 }
 
-void testDegree( uint32_t *indexes, uint32_t size, uint32_t round, uint32_t bit )
+uint32_t testDegree( uint32_t *indexes, uint32_t size, uint32_t round, uint32_t bit )
 {
 	uint32_t degree;
 	uint64_t tableSize = 1;
 	tableSize <<= size;
-	// Not sure if the following would work on a 32-bit machine if tableSize doesn't fit on 32 bits
 	uint8_t *truthTable = (uint8_t *) calloc(tableSize, sizeof(uint8_t));
 	if (truthTable == NULL) {
 		printf("Memory allocation failed, you wanted to allocate %lld bytes", tableSize);
@@ -150,6 +149,7 @@ void testDegree( uint32_t *indexes, uint32_t size, uint32_t round, uint32_t bit 
 	//printTruthTable( truthTable, size );
 	printf("The algebraic degree of output bit %d of the state after %d rounds of Friet is %d\n", bit, round, degree);
 	free( truthTable );
+	return degree;
 }
 
 uint32_t testDegreeInv( uint32_t *indexes, uint32_t size, uint32_t round, uint32_t bit )
@@ -157,7 +157,6 @@ uint32_t testDegreeInv( uint32_t *indexes, uint32_t size, uint32_t round, uint32
 	uint32_t degree;
 	uint64_t tableSize = 1;
 	tableSize <<= size;
-	// Not sure if the following would work on a 32-bit machine if tableSize doesn't fit on 32 bits
 	uint8_t *truthTable = (uint8_t *) calloc(tableSize, sizeof(uint8_t));
 	if (truthTable == NULL) {
 		printf("Memory allocation failed, you wanted to allocate %lld bytes", tableSize);
