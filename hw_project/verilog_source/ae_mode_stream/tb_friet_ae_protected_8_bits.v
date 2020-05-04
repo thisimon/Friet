@@ -1007,7 +1007,7 @@ end
 initial
 begin
     $dumpfile("dump.vcd");
-    $dumpvars(1, tb_friet_ae_protected);
+    $dumpvars(1, tb_friet_ae_protected_8_bits);
 end
 
 endmodule
